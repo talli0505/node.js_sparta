@@ -1,0 +1,30 @@
+설치하는 순서
+
+pagkage.json 만드는 법 : 터미널 열고 해당 경로에서 npm init -y친다.
+
+express.js 설치 : pagkage.json 설치후 npm i express쳐서 설치
+
+thunder client 설치 : thunder client가 없으면 확장자가서 찾아 설치
+
+mongoose 설치 : mongoose가 없으면 npm i mongoose쳐서 설치
+
+
+각 파일에 들어가는 부분 나눔 (게시판 기준)
+1. routes (클라이언트의 요청 조건(메서드, 주소 등)에 대응해 응답하는 방식)
+=> 1-1. index.js : 전체 게시글 목록 조회
+=> 1-2. posts.js : 게시글 조회, 작성, 수정, 삭제
+=> 1-3. comments.js 댓글 목록 조회, 작성, 수정, 삭제
+2. schema
+=> 2-1. index.js : 몽구스 연결 및 app쪽으로 exports
+=> 2-2. post.js : 게시글 모델 작성 (제목, 작성자 명, 비밀번호, 작성 내용)
+=> 2-3. comments.js : 댓글 모델 작성
+
+3. app.js
+=> 기본적으로 오픈하는 부분
+=> 각 폴더에 따른 exports 부분을 받아옴
+=> 미들웨어 연결
+=> 포트 불러오기
+
+두가지 테스트를 진행 시
+동기 : 첫번째를 하고 끝나야 두번째꺼 진행
+비동기 : 동시에 진행
