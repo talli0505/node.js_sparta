@@ -5,13 +5,12 @@ const mongoose = require("mongoose");
 const connect = () => {
   mongoose
     .connect("mongodb://localhost:27017/aaa")
-    .catch(err => console.log(err));
-};
 
-// 몽구스의 연결이 실패할 경우 에러 말해주는거
+.catch(err => console.log(err));
+}
+
 mongoose.connection.on("error", err => {
-  console.error("몽고디비 연결 에러", err);
+console.error("몽고디비 연결 에러", err);
 });
 
-// 현재 모듈을 내보내 줌
 module.exports = connect;

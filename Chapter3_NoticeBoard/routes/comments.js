@@ -21,7 +21,7 @@ router.post("/comments/:postId", async (req, res) => {
     await Comment.create({ postId: postId, user : user, password : password, content : content });
 
     
-    res.json({ result : "Success" });
+    res.json({ "message" : "댓글을 생성하였습니다." })
 });
 
 // 댓글 보여주기
@@ -84,7 +84,7 @@ router.put("/comments/:commentId", async (req, res) => {
   );
 
 
-    res.json({ result : "Success" });
+    res.json({ "message" : "댓글을 수정하였습니다." })
 });
 
 
@@ -110,6 +110,6 @@ router.delete("/comments/:commentId", async (req, res) => {
     }
     await Comment.deleteOne({ _id: commentId });
 
-    res.json({ result : "Success" });
+    res.json({ "message" : "댓글을 삭제하였습니다." })
 });
 module.exports = router;

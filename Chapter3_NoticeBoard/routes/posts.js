@@ -44,16 +44,16 @@ router.get("/posts/:postsId", async (req, res) => {
 
 
     const posts = await Posts.find();
-    const filteredPosts = posts.filter((e) => e["id"].toString() === postsId);
-    const data = [
+    const filteredPosts = posts.filter((e) => e["_id"].toString() === postsId);
+    console.log(filteredPosts)
+    const data = 
         {
             postsId: filteredPosts[0]._id.toString(),
             user: filteredPosts[0].user,
             title: filteredPosts[0].title,
             content: filteredPosts[0].content,
             createdAt: filteredPosts[0].createdAt,
-        },
-    ];
+        }
 
 
     res.json({ data });
@@ -64,9 +64,9 @@ router.post("/posts", async (req, res) => {
     const { user, password, title, content } = req.body
 
     let now = new Date()
-    const createdPosts = await Posts.create({ user : user, password : password, title : title, content : content, createdAt: now });
+    await Posts.create({ user : user, password : password, title : title, content : content, createdAt: now });
 
-    res.json({ createdPosts: createdPosts });
+    res.json({ "message" : "게시글이 생성하였습니다." })
 });
 
 // 게시글 수정 : /posts/:_postId PUT
@@ -96,7 +96,7 @@ router.put("/posts/:postsId", async (req, res) => {
         {$set:{ password: password, title: title, content: content,},}
     );
 
-    res.json({ result: "success" })
+    res.json({ "message" : "게시글이 수정하였습니다." })
 });
 
 // 게시글 삭제 : /posts/:_postId DELETE
@@ -120,7 +120,7 @@ router.delete("/posts/:postsId", async (req, res) => {
     await Posts.deleteOne( { _id: postsId});
 
 
-    res.json({ result: "success" })
+    res.json({ "message" : "게시글이 삭제하였습니다." })
 });
 
 module.exports = router;
