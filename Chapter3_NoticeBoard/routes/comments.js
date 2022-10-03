@@ -9,27 +9,28 @@ const Comment = require("../schemas/comment");
 const router = express.Router();
 
 // 댓글 생성 : /comments/:_postId POST
-router.post("/comments/:_postId", async (req, res) => {
-    const { _postId } = req.params
+router.post("/comments/:postId", async (req, res) => {
+    const { postId } = req.params;
     const { user, password, content } = req.body
-    const CurrentPosts = await Posts.find({ _id: _postId });
+    const CurrentPosts = await Posts.find({ _id: postId });
 
     if (!CurrentPosts.length) {
       return res.status(400).json({ success: false, errorMessage: "게시글이 존재하지 않습니다." });
     }
 
-    await Comment.create({ _id : _postId, user : user, password : password, content : content });
+    await Comment.create({ postId: postId, user : user, password : password, content : content });
 
     
     res.json({ result : "Success" });
 });
 
-router.get("/comments/:_postId", async (req, res) => {
+// 댓글 보여주기
+router.get("/comments/:postId", async (req, res) => {
 
-  const { _postId } = req.params;
+  const { postId } = req.params;
 
 
-  const currentPosts = await Posts.find({ _id: _postId });
+  const currentPosts = await Posts.find({ _id: postId });
 
 
   if (!currentPosts.length) {
@@ -37,28 +38,31 @@ router.get("/comments/:_postId", async (req, res) => {
   }
 
 
-  const allCommentInfo = await Comment.find({ _postId });
+  const allCommentInfo = await Comment.find({ postId : postId });
+  // console.log(allCommentInfo)
+
+  // const filteredComments = comments.filter((e) => e["_id"].toString() === postId);
   const data = [];
 
-
+  // 오류생성하니깐 바꾸기
   for (let i = 0; i < allCommentInfo.length; i++) {
-      data.push({
-          commentId: allCommentInfo[i]._id.toString(),
-          user: allCommentInfo[i].user,
-          content: allCommentInfo[i].content,
-          createdAt: allCommentInfo[i].createdAt,
-      });
-  }
-
+    data.push({
+        commentId: allCommentInfo[i]._id.toString(),
+        user: allCommentInfo[i].user,
+        content: allCommentInfo[i].content,
+        createdAt: allCommentInfo[i].createdAt,
+    });
+}
 
   res.json({ data: data });
 });
 
 // 댓글 수정 : /comments/:_commentId PUT
-router.put("/comments/:_commentId", async (req, res) => {
-    const { _commentId } = req.params
+router.put("/comments/:commentId", async (req, res) => {
+    const { commentId } = req.params
     const { password, content } = req.body
-    const currentComments = await Comment.find({ _id: _commentId });
+    const currentComments = await Comment.find({ _id: commentId });
+    console.log(currentComments)
 
 
     if (!currentComments.length) {
@@ -66,7 +70,18 @@ router.put("/comments/:_commentId", async (req, res) => {
     }
 
 
-    await Comment.updateOne({ _id: _commentId, password: password, content: content});
+    await Comment.updateOne(
+      {
+          _id: commentId,
+      },
+      {
+
+          $set: {
+              password: password,
+              content: content,
+          },
+      }
+  );
 
 
     res.json({ result : "Success" });
@@ -75,13 +90,13 @@ router.put("/comments/:_commentId", async (req, res) => {
 
 
 // 댓글 삭제 : /comments/:_commentId DELETE
-router.delete("/comments/:_commentId", async (req, res) => {
+router.delete("/comments/:commentId", async (req, res) => {
 
-    const { _commentId } = req.params
+    const { commentId } = req.params
     const { password } = req.body
 
 
-    const currentComments = await Comment.find({ _id: _commentId });
+    const currentComments = await Comment.find({ _id: commentId });
 
 
     if (!currentComments.length) {
@@ -93,7 +108,7 @@ router.delete("/comments/:_commentId", async (req, res) => {
 
 
     }
-    await Comment.deleteOne({ _id: _commentId });
+    await Comment.deleteOne({ _id: commentId });
 
     res.json({ result : "Success" });
 });

@@ -8,16 +8,10 @@ const express = require("express");
 const Posts = require("../schemas/post.js");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-    res.send("this is root page!");
-});
-
-
 // 게시글 조회 : /posts GET
 router.get("/posts", async (req, res) => {
 
-    const dataAll = await Posts.find().sort(({ createdAt: -1 }))
-
+    const dataAll = await Posts.find().sort({ createdAt: -1 })
 
     const data = []
     for (let i = 0; i < dataAll.length; i++) {
@@ -34,21 +28,23 @@ router.get("/posts", async (req, res) => {
 
 
 // 게시글 상세 조회 : /posts/:_postId GET
-router.get("/posts/:_postsId", async (req, res) => {
+router.get("/posts/:postsId", async (req, res) => {
 
-    const { _postsId } = req.params;
+    const { postsId } = req.params;
+    // console.log(req.params)
+    // console.log(typeof(req.params))
 
-
-    const currentPost = await Posts.find({ _id: (_postsId) });
+    const currentPost = await Posts.find({ _id : postsId });
+    // console.log(currentPost)
 
 
     if (!currentPost.length) {
-      return res.status(400).json({ success: false, errorMessage: "게시글이 존재하지 않습니다." });
+        return res.status(400).json({ success: false, errorMessage: "게시글이 존재하지 않습니다." });
     }
 
 
     const posts = await Posts.find();
-    const filteredPosts = posts.filter((e) => e["_id"].toString() === _postsId);
+    const filteredPosts = posts.filter((e) => e["id"].toString() === postsId);
     const data = [
         {
             postsId: filteredPosts[0]._id.toString(),
@@ -65,54 +61,63 @@ router.get("/posts/:_postsId", async (req, res) => {
 
 // 게시글 작성 : /posts POST
 router.post("/posts", async (req, res) => {
-    const { _postsId, user, password, title, content } = req.body
+    const { user, password, title, content } = req.body
 
     let now = new Date()
-    const createdPosts = await Posts.create({ _id : _postsId, user : user, password : password, title : title, content : content, createdAt: now });
+    const createdPosts = await Posts.create({ user : user, password : password, title : title, content : content, createdAt: now });
 
     res.json({ createdPosts: createdPosts });
 });
 
 // 게시글 수정 : /posts/:_postId PUT
-router.put("/posts/:_postsId", async (req, res) => {
+router.put("/posts/:postsId", async (req, res) => {
 
-    const { _postsId } = req.params;
+    const { postsId } = req.params;
+    // console.log(req.params)
 
-    const { password, title, content } = req.body;
+    const { title, content, password } = req.body;
+    // console.log(req.body)
 
 
-    const currentPost = await Posts.find({ _id: (_postsId) });
+    const currentPost = await Posts.find({ _id: postsId });
+    // console.log(currentPost)
 
 
     if (!currentPost.length) {
         return res.status(400).json({ success: false, errorMessage: "게시글이 존재하지 않습니다." });
     }
 
+    if (password != currentPost[0]["password"]) {
+        return res.status(400).json({ success: false, errorMessage: "비밀번호가 다릅니다." });
+    }
 
-    await Posts.updateOne( { _id: _postsId, title : title, content : content });
+    await Posts.updateOne(
+        { _id: (postsId),},
+        {$set:{ password: password, title: title, content: content,},}
+    );
 
     res.json({ result: "success" })
 });
 
 // 게시글 삭제 : /posts/:_postId DELETE
-router.delete("/posts/:_postsId", async (req, res) => {
+router.delete("/posts/:postsId", async (req, res) => {
 
-    const { _postsId } = req.params
+    const { postsId } = req.params
     const { password } = req.body
 
 
-    const currentPost = await Posts.find({ _id: _postsId });
+    const currentPost = await Posts.find({ _id: postsId });
     // console.log(currentPost)
 
     if (!currentPost.length) {
-      return res.status(400).json({ success: false, errorMessage: "게시글이 존재하지 않습니다." });
+        return res.status(400).json({ success: false, errorMessage: "게시글이 존재하지 않습니다." });
     }
 
     if (password != currentPost[0]["password"]) {
-      return res.status(400).json({ success: false, errorMessage: "비밀번호가 다릅니다." });
+        return res.status(400).json({ success: false, errorMessage: "비밀번호가 다릅니다." });
     }
 
-    await Posts.deleteOne( { _id: _postsId});
+    await Posts.deleteOne( { _id: postsId});
 
 
     res.json({ result: "success" })

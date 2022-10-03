@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
 
 const commentSchema = new mongoose.Schema({
-    // _postId: {            //고유번호
-    //     type: String, 
-    //     required: true, 
-    // },
+    postId: {            //고유번호
+        type: String, 
+    },
     user: {               //작성자명
         type: String,
         required: true,
