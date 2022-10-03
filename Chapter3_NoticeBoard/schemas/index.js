@@ -4,14 +4,10 @@ const mongoose = require("mongoose");
 // 설치한 몽고디비에 접근, 에러가 있으면 에러 말하기
 const connect = () => {
   mongoose
-    .connect("mongodb+srv://test:sparta@cluster0.h0u5sld.mongodb.net/cluster0?retryWrites=true&w=majority", {dbName : 'aaa'}),
-    { ignoreUndefined: true,
-      useUnifiedTopology: true,
-      useNewUrlParser: true
-      }
+    .connect("mongodb://localhost:27017/aaa")
+    .catch(err => console.log(err));
+};
 
-    // .catch(err => console.log(err));
-}
 mongoose.connection.on("error", err => {
 console.error("몽고디비 연결 에러", err);
 });
