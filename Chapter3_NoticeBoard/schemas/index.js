@@ -10,7 +10,7 @@ const connect = () => {
       useNewUrlParser: true
       }
 
-.catch(err => console.log(err));
+// .catch(err => console.log(err));
 }
 
 mongoose.connection.on("error", err => {
