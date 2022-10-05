@@ -18,7 +18,8 @@ router.post("/comments/:postId", async (req, res) => {
       return res.status(400).json({ success: false, errorMessage: "게시글이 존재하지 않습니다." });
     }
 
-    await Comment.create({ postId: postId, user : user, password : password, content : content });
+    let now = new Date()
+    await Comment.create({ postId: postId, user : user, password : password, content : content, createdAt : now });
 
     
     res.json({ "message" : "댓글을 생성하였습니다." })
@@ -27,7 +28,7 @@ router.post("/comments/:postId", async (req, res) => {
 // 댓글 보여주기
 router.get("/comments/:postId", async (req, res) => {
 
-  const { postId } = req.params;
+  const { postId } = req.params; 
 
 
   const currentPosts = await Posts.find({ _id: postId });
@@ -38,13 +39,12 @@ router.get("/comments/:postId", async (req, res) => {
   }
 
 
-  const allCommentInfo = await Comment.find({ postId : postId });
+  const allCommentInfo = await Comment.find({ postId : postId }).sort({ createdAt: -1 })
   // console.log(allCommentInfo)
 
   // const filteredComments = comments.filter((e) => e["_id"].toString() === postId);
   const data = [];
 
-  // 오류생성하니깐 바꾸기
   for (let i = 0; i < allCommentInfo.length; i++) {
     data.push({
         commentId: allCommentInfo[i]._id.toString(),
