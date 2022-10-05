@@ -16,6 +16,10 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    createdAt: {            // 시간
+        type: Date,
+        required: false,
+    },
 });
 
 module.exports = mongoose.model("Comment", commentSchema);
