@@ -10,6 +10,6 @@ app.use(express.json());
 
 app.use([signupRouter, loginRouter, postRouter, commentRouter])
 
-app.listen(8080, () => {
+app.listen(3000, () => {
   console.log("서버가 요청을 받을 준비가 됐어요");
 });
